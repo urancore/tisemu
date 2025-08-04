@@ -1,0 +1,36 @@
+mov inpt acc     # acc = inpt
+sav              # bak = acc
+add 5            # acc += 5
+sub 2            # acc -= 2
+neg              # acc *= -1
+swp              # обмен acc и bak
+# mov acc nil      # acc -> nil (ошибка: запрещено, проверка)
+mov nil acc      # acc = 0 (валидно)
+mov acc acc      # acc = acc (валидно)
+# jmp и метки
+jmp label1
+
+nop              # не выполнится (перепрыгнем через него)
+label1:
+add 1            # acc += 1 (после перехода сюда)
+jez zero         # если acc == 0, прыгнуть на zero
+jnz nonzero      # если acc != 0, прыгнуть на nonzero
+jgz greater      # если acc > 0
+jlz lesser       # если acc < 0
+
+zero:
+mov 0 acc        # сюда попадаем только если acc == 0
+jmp end
+
+nonzero:
+mov 1 acc        # сюда попадаем если acc != 0
+jro -2           # вернёмся на 2 строки назад
+
+greater:
+mov 100 acc
+jmp end
+
+lesser:
+mov -100 acc
+end:
+# Конец программы

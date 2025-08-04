@@ -1,10 +1,10 @@
 CC = gcc
 CFLAGS = -Wall -g
-NAME = tsm.exe
+NAME = tisemu.exe
 SRCS = main.c
 OBJS = $(SRCS:.c=.o)
 
-all: $(NAME) run
+all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -o $(NAME)
