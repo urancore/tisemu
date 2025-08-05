@@ -1,0 +1,56 @@
+# TISemu
+## Overview
+TISemu is a lightweight emulator for the TIS-100 assembly-like programming environment<br>
+What is TIS-100?: https://en.wikipedia.org/wiki/TIS-100
+## Instruction
+
+Instruction             Description
+mov             Copy a value from one location to another
+sav             Save the current value of acc to backup register bak
+swp             Swap the contents of acc and bak
+inpt            Read from input stream (similar to UP, DOWN, LEFT, RIGHT in TIS-100)
+out             Output to console (simulates output stream)
+nil             Represents zero or null (used for resetting acc)
+nop             set acc to zero
+add             Add a value to acc
+sub             Subtract a value from acc
+neg             Negate the value in acc
+jmp             Unconditional jump to a label
+jez             Jump if acc is zero
+jnz             Jump if acc is not zero
+jgz             Jump if acc is greater than zero
+jlz             Jump if acc is less than zero
+jro             Relative jump by value
+#               Comments start with #
+
+## Registers & Streams
+acc    - Accumulator: main working register
+bak    - Backup register: stores temporary values
+inpt   - Input stream
+out    - Output stream (prints to console)
+nil    - Represents a null or zero value
+
+## Syntax Notes
+Comments begin with # and are ignored by the interpreter
+Labels are defined with a colon suffix, e.g. loop:
+Instructions can be indented for readability
+Labels are used as jump targets for control flow
+
+## Examples
+```
+mov 10 acc    # acc = 10
+sav           # bak = 10
+add 5         # acc = 15
+sub 5         # acc = 10
+mov nil acc   # acc = 0
+jmp label1
+```
+
+```
+label1:
+  add 1            # acc += 1 / acc = 1
+  jez zero         # if acc == 0, jump to zero
+  jnz nonzero      # if acc != 0, jump to nonzero
+  jgz greater      # if acc > 0, jump to greater
+  jlz lesser       # if acc < 0, jump to lesser
+```

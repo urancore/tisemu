@@ -1,20 +1,28 @@
 CC = gcc
-CFLAGS = -Wall -g
-NAME = tisemu.exe
-SRCS = main.c
-OBJS = $(SRCS:.c=.o)
+CFLAGS = -Wall -Wextra -Werror -std=c99 -g
+LDFLAGS = -static-libgcc -Wl,--gc-sections
 
-all: $(NAME)
+O = out
+SRC = $(wildcard *.c)
+OBJ = $(SRC:%.c=$(O)/%.o)
 
-$(NAME): $(OBJS)
-	$(CC) $(OBJS) -o $(NAME)
+BIN = tisemu
 
-%.o: %.c
+.PHONY: all clean
+
+all: $(BIN)
+
+$(BIN): $(OBJ)
+	@echo " LD    $@"
+	$(CC) $(OBJ) $(LDFLAGS) -o $@
+
+$(O)/%.o: %.c | $(O)
+	@echo " CC    $<"
 	$(CC) $(CFLAGS) -c $< -o $@
 
-run:
-	.\$(NAME)
+$(O):
+	mkdir -p $(O)
 
-.PHONY: clean
 clean:
-	rm -f $(OBJS) $(NAME)
+	@echo " CLEAN $(O) and $(BIN)"
+	rm -rf $(O) $(BIN)

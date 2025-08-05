@@ -1,0 +1,22 @@
+Usage:
+    tisemu <program.tis> [options]
+
+Description:
+    A simple TIS-100 emulator in C.
+
+Positional arguments:
+    <program.tis>         Path to TIS program file to run
+
+Options:
+    -i, --input <value>   Provide an integer value to the INPT register (default: 0)
+    -d, --debug           Enable debug mode (prints internal state)
+    --doc                 Display the tis-100 asm documentation
+    -c, --color           Enable color output
+    --banner              Display the ASCII logo banner before execution
+    -v, --version         Display tisemu version
+    -h, --help            Show this help message and exit
+
+Examples:
+    ./tisemu test.tis
+    ./tisemu test.tis -i 42
+    ./tisemu test.tis --debug --banner
