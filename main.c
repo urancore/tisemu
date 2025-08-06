@@ -5,8 +5,6 @@
 #include "cli.h"
 #include "emulator.h"
 
-// TODO: delete out instruction / add logic: mov acc out - mov inpt out -e etc...
-
 int main(int argc, char *argv[]) {
 
 	Emulator emu = {0};
