@@ -1,39 +1,21 @@
-mov inpt acc     # acc = inpt (input value -> accumulator)
-sav              # bak = acc (save accumulator to bak)
-add 5            # acc += 5 (add 5)
-sub 2            # acc -= 2 (subtract 2)
-neg              # acc *= -1 (negate acc)
-swp              # swap acc and bak (exchange values between acc and bak)
+start:
+  mov inpt acc
+  sav
+  jez end
+  jlz end
+  jgz loop
 
-# mov acc nil    # acc -> nil (error: not allowed, test case)
-mov nil acc      # acc = 0 (valid: load 0 into acc)
-mov acc acc      # acc = acc (valid: no change)
-
-# jmp and labels
-jmp label1       # unconditional jump to label1
-
-nop              # will not execute (we jump over it)
-
-label1:          # label: label1
-add 1            # acc += 1 (increment acc by 1)
-jez zero         # if acc == 0, jump to label zero
-jnz nonzero      # if acc != 0, jump to label nonzero
-jgz greater      # if acc > 0, jump to label greater
-jlz lesser       # if acc < 0, jump to label lesser
-
-zero:            # label: zero
-mov 0 acc        # reached only if acc == 0
-jmp end          # jump to the end of the program
-
-nonzero:         # label: nonzero
-mov 1 acc        # reached if acc != 0
-jro -2           # jump back 2 lines (returns to jnz)
-
-greater:         # label: greater
-mov 100 acc      # set acc = 100
-jmp end          # jump to the end of the program
-
-lesser:          # label: lesser
-mov -100 acc     # set acc = -100
+loop:
+  sub 1
+  swp
+  add bak
+  swp
+  jez end_g
+  jmp loop
 
 end:
+
+end_g:
+  swp
+  mov acc out
+  nop

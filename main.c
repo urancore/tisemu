@@ -5,11 +5,7 @@
 #include "cli.h"
 #include "emulator.h"
 
-// TODO: create func get_version
-// TODO: delete global vars
 // TODO: delete out instruction / add logic: mov acc out - mov inpt out -e etc...
-// TODO: create error buffer
-// TODO: rewrite mov logic
 
 int main(int argc, char *argv[]) {
 

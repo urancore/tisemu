@@ -5,22 +5,26 @@
 #include "error.h"
 
 Register* get_keywords(Emulator *emu) {
-	static Register keywords[4];
+	static Register keywords[5];
 
 	keywords[0].name = "acc";
 	keywords[0].ptr = &(emu->acc);
 
 	keywords[1].name = "bak";
-	keywords[1].ptr = &(emu->acc);
+	keywords[1].ptr = &(emu->bak);
 
-	keywords[2].name = "nil";
-	keywords[2].ptr = NULL;
+	keywords[2].name = "inpt";
+	keywords[2].ptr = &(emu->inpt);
 
-	keywords[3].name = NULL;
+	keywords[3].name = "nil";
 	keywords[3].ptr = NULL;
+
+	keywords[4].name = NULL;
+	keywords[4].ptr = NULL;
 
 	return keywords;
 }
+
 
 int *get_register(Emulator *emu, const char *name)
 {
@@ -42,6 +46,7 @@ int str_to_token(const char *str)
 	if (strcmp(str, "swp") == 0) return SWP;
 	if (strcmp(str, "inpt") == 0) return INPT;
 	if (strcmp(str, "nil") == 0) return NIL;
+	if (strcmp(str, "nop") == 0) return NOP;
 	if (strcmp(str, "add") == 0) return ADD;
 	if (strcmp(str, "sub") == 0) return SUB;
 	if (strcmp(str, "neg") == 0) return NEG;
@@ -125,32 +130,40 @@ int exec_line(Emulator *emu, const char *linebuf_input)
 
 	int instruction = str_to_token(op);
 	int *src_ptr = NULL;
+	// emu->instruction = instruction;
 
 	switch (instruction) {
 	case MOV:
 		if (matched == 3) {
-		src_ptr = get_register(emu, arg1);
-
-		if (strcmp(arg2, "nil") == 0) {
-			errorf(emu, "invalid mov: cannot write to 'nil'");
-			return 0;
-		} else if (strcmp(arg1, "nil") == 0 && strcmp(arg2, "nil") == 0) {
-			errorf(emu, "invalid mov: cannot use 'nil' as both source and destination");
-			return 0;
-		} else if (strcmp(arg2, "acc") != 0) {
-			errorf(emu, "invalid mov: destination must be 'acc'");
-			return 0;
-		} else if (strcmp(arg1, "nil") == 0) {
-			emu->acc = 0;
-		} else if (src_ptr) {
-			emu->acc = *src_ptr;
+			src_ptr = get_register(emu, arg1);
+			int arg2_token = str_to_token(arg2);
+			if (arg2_token == NIL) {
+				errorf(emu, "invalid mov: cannot write to 'nil'");
+				return 0;
+			} else if (arg2_token != ACC && arg2_token != OUT) {
+				errorf(emu, "invalid mov: destination must be 'acc'");
+				return 0;
+			} else if (strcmp(arg1, "nil") == 0 && arg2_token == ACC) {
+				emu->acc = 0;
+			} else if (strcmp(arg1, "nil") == 0 && arg2_token == OUT) {
+				printf("%d\n", 0);
+			} else if (src_ptr) {
+				if (arg2_token == ACC) {
+					emu->acc = *src_ptr;
+				} else if (arg2_token == OUT) {
+					printf("%d\n", *src_ptr);
+				}
+			} else {
+				int val = atoi(arg1);
+				if (arg2_token == ACC) {
+					emu->acc = val;
+				} else if (arg2_token == OUT) {
+					printf("%d\n", val);
+				}
+			}
 		} else {
-			int val = atoi(arg1);
-			emu->acc = val;
-		}
-		} else {
-		errorf(emu, "mov requires two arguments");
-		return 0;
+			errorf(emu, "mov requires two arguments");
+			return 0;
 		}
 		break;
 	case SAV:
@@ -236,26 +249,12 @@ int exec_line(Emulator *emu, const char *linebuf_input)
 		(emu->pc)--; // корректировка (pc++ в цикле)
 		break;
 
-	case OUT:
-		if (matched != 2)
-		{
-			printf("\n");
-			printf("arg1 %s", arg1);
-			break;
-		}
-		src_ptr = get_register(emu, arg1);
-		if (src_ptr)
-			printf("%d\n", *src_ptr);
-		else
-			printf("%s", arg1);
-		break;
-
 	default:
 		errorf(emu, "unknown instruction '%s'", op);
 		return 0;
 	}
 
-	emu->line++;
+	emu->line = emu->pc;
 	return 1;
 }
 
@@ -282,10 +281,10 @@ void debug_message(Emulator *emu)
 	printf("%s[DEBUG INFO]%s\n", label_color, reset);
 
 	printf("%sline:%s  %s%u%s\n", label_color, reset, value_color, emu->line, reset);
-	printf("%sacc :%s  %s%d%s\n", label_color, reset, value_color, emu->acc, reset);
 	printf("%spc  :%s  %s%d%s\n", label_color, reset, value_color, emu->pc, reset);
-	printf("%sbak :%s  %s%d%s\n", label_color, reset, value_color, emu->bak, reset);
 	printf("%sinpt:%s  %s%d%s\n", label_color, reset, value_color, emu->inpt, reset);
+	printf("%sacc :%s  %s%d%s\n", label_color, reset, value_color, emu->acc, reset);
+	printf("%sbak :%s  %s%d%s\n", label_color, reset, value_color, emu->bak, reset);
 
 	printf("%s-------------------%s\n", label_color, reset);
 }

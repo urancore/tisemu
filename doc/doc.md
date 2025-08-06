@@ -55,3 +55,9 @@ label1:
   jlz lesser       # if acc < 0, jump to lesser
 
 ```
+
+### ex2
+```
+mov 102 acc # acc = 102
+mov acc out # print 102 in console
+```
